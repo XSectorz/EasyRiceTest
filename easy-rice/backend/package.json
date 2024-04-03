@@ -1,0 +1,31 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "backend for easy-rice-test",
+  "main": "server.js",
+  "scripts": {
+    "test": "dev",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XSectorz/EasyRiceTest.git"
+  },
+  "keywords": [
+    "backend"
+  ],
+  "author": "XSectorZ",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/XSectorz/EasyRiceTest/issues"
+  },
+  "homepage": "https://github.com/XSectorz/EasyRiceTest#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-async-handler": "^1.2.0",
+    "mongoose": "^8.2.4",
+    "nodemon": "^3.1.0"
+  }
+}
