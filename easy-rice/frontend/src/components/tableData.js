@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DataColumn from './dataColumn';
 import axios from 'axios';
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { IoChevronBackSharp, IoChevronForwardSharp } from "react-icons/io5";
 
 function TableData() {
 
@@ -67,6 +68,19 @@ function TableData() {
                     <DataColumn createDate={item.createDate} inspectionID={item.inspectionID} name={item.name} standard={item.standardName} note={item.note} onCheckboxChange={(isChecked) => handleCheckBox(isChecked, item._id)} />
                 ))
             }
+            <div className='flex flex-row mt-5'>
+                <div className='flex'>
+                    1-10 of {data.length}
+                </div>
+                <div className='flex flex-row ml-5'>
+                    <div className='flex items-center justify-center mr-5'>
+                        <IoChevronBackSharp/>
+                    </div>
+                    <div className='flex items-center justify-center'>
+                        <IoChevronForwardSharp/>    
+                    </div>
+                </div>
+            </div>
             
             {/*
                 <p>Selected items: {selectedItems.join(', ')}</p>

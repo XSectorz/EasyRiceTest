@@ -7,11 +7,25 @@ const getAllData = asyncHandler(async (req,res) => {
     res.status(200).json(dataList);
 });
 
+const getDataByID = asyncHandler(async (req,res) => {
+    try {
+        const { inspectionID } = req.query
+
+        let dataList;
+
+        dataList = await riceData.find({'inspectionID': inspectionID});
+
+        return res.status(200).json(dataList);
+    } catch(err) {
+        console.log(err)
+    }
+});
+
 const createData = asyncHandler(async (req,res) => {
     try {
         const data = req.body;
 
-        const dataCreate = await riceData.create(data);
+        await riceData.create(data);
         return res.status(200).json({"message" : "Create Successfully"})
 
     } catch(err) {
@@ -20,4 +34,4 @@ const createData = asyncHandler(async (req,res) => {
 });
 
 
-module.exports = { getAllData, createData }
+module.exports = { getAllData, createData, getDataByID }
