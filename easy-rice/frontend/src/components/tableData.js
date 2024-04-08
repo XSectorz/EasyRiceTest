@@ -58,6 +58,24 @@ function TableData({ searchID, startDate, endDate }) {
         }
     };
 
+    const deleteHandler = async () => {
+        try {
+            
+            for(let id of selectedItems) {
+                await axios.delete("http://localhost:5000/api/easy-rice/history/" + id);
+            }
+
+            if(dataSize - selectedItems.length <= (page-1)*10) {
+                setPage(page-1);
+            }
+
+            setSelectedItems([]);
+            fecthDataHandler();
+        } catch(err) {
+            console.log(err);
+        }
+    }
+
     const fetchDataFromFilter = async () => {
         try {
             let fromDateObj = "";
@@ -96,16 +114,13 @@ function TableData({ searchID, startDate, endDate }) {
         }
     };
 
-    useEffect(() => {
-        fecthDataHandler();
-    }, [page]);
 
     useEffect(() => {
-        console.log("Data changed ", searchID);
-        console.log("start changed ", startDate);
-        console.log("end changed ", endDate);
+        //console.log("Data changed ", searchID);
+        //console.log("start changed ", startDate);
+        //console.log("end changed ", endDate);
         fecthDataHandler();
-    }, [searchID,startDate,endDate]);
+    }, [searchID,startDate,endDate,page]);
 
     const handleCheckBox = (isChecked, itemId) => {
         if(isChecked) {
@@ -118,7 +133,7 @@ function TableData({ searchID, startDate, endDate }) {
     return(
         <div className='flex flex-col w-full'>
             <div className={`${selectedItems.length >= 1 ? 'flex flex-row mb-10' : 'hidden'}`}>
-                <div className='flex flex-row text-[#1F7B44] border border-[#1F7B44] px-5 py-2 rounded-lg font-bold hover:text-white hover:cursor-pointer hover:bg-[#1F7B44] hover:border-opacity-0 transition duration-200'>
+                <div className='flex flex-row text-[#1F7B44] border border-[#1F7B44] px-5 py-2 rounded-lg font-bold hover:text-white hover:cursor-pointer hover:bg-[#1F7B44] hover:border-opacity-0 transition duration-200' onClick={deleteHandler}>
                     <div className='flex items-center justify-center text-xl'>
                         <RiDeleteBin6Line />&nbsp;
                     </div>

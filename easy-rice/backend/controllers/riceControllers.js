@@ -123,6 +123,25 @@ const getDataByDateRange = asyncHandler(async (req,res) => {
     }
 });
 
+const deleteData = asyncHandler(async (req,res) => {
+    try {
+
+        const dataID = req.params.id;
+        const deleteDataID = await riceData.findByIdAndDelete(dataID);
+
+        if(!deleteDataID) {
+            return res.status(404).send(`Data ID not found!`);
+        }
+
+        res.status(200).send({
+            message: `Deleted ${dataID} from database`
+        });
+
+    } catch(err) {
+        console.log(err);
+    }
+});
+
 const createData = asyncHandler(async (req,res) => {
     try {
         const data = req.body;
@@ -136,4 +155,4 @@ const createData = asyncHandler(async (req,res) => {
 });
 
 
-module.exports = { getAllData, createData, getDataByID, getDataByDateRange }
+module.exports = { getAllData, createData, getDataByID, getDataByDateRange , deleteData}
