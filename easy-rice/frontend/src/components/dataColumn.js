@@ -11,6 +11,9 @@ function DataColumn({ createDate, inspectionID, name, standard, note, onCheckbox
         onCheckboxChange(newVal)
     };
 
+    const dateTime = new Date(createDate);
+    const dateStr = dateTime.getDate().toString().padStart(2, '0') + "/" + (dateTime.getMonth() + 1).toString().padStart(2, '0') + "/" + dateTime.getFullYear() + " " + dateTime.getHours() + ":" + dateTime.getMinutes() + ":" + dateTime.getSeconds();
+
     return (
         <div className='flex flex-row items-center border border-[#A8A8A8] border-t-0 w-full px-5 py-3'>
             <div className='flex flex-row w-[20%]'>
@@ -18,7 +21,7 @@ function DataColumn({ createDate, inspectionID, name, standard, note, onCheckbox
                     <input className=" accent-[#1F7B44]" type="checkbox" id="dataCheckBox" name="dataCheckBox" checked={isClicked} onChange={handleCheckBox} />&nbsp;
                 </div>
                 <div className="flex">
-                    {createDate}
+                    {dateStr}
                 </div>
             </div>
             <div className='flex w-[20%]'>
