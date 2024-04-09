@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState, useEffect } from "react";
 import NavBar from '../components/navbar';
 import { styled } from '@mui/material/styles';
 import Checkbox from '@mui/material/Checkbox';
@@ -7,6 +7,7 @@ import { Box } from '@mui/system';
 import { IoCalendarClearOutline } from "react-icons/io5";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker"
 import { Link } from 'react-router-dom';
+import axios from "axios";
 
 function CreatePage() {
 
@@ -14,6 +15,26 @@ function CreatePage() {
         display:
          'none',
       });
+
+    const fetchStandardOption = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/api/easy-rice/standard');
+            const data = response.data;
+
+            const options = data.map(item => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ));
+            setOptions(options)
+        } catch(err) {
+            console.log(err)
+        }
+    };
+
+    useEffect(() => {
+        fetchStandardOption();
+      }, []);
 
     const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -29,8 +50,10 @@ function CreatePage() {
     const [ name , setName ] = useState("");
     const [ note , setNote ] = useState("");
     const [ price , setPrice ] = useState("");
-    const [ standardSelect , setStandardSelect ] = useState(null);
+    const [standardSelect , setStandardSelect ] = useState("");
+    const [options , setOptions ] = useState(null);
     const [samplingDate, setSamplingDate] = useState(null);
+
     const [checkedItems, setCheckedItems] = useState({
         item1: false,
         item2: false,
@@ -126,12 +149,9 @@ function CreatePage() {
                                 Standard*
                             </div>
                             <div className={`flex border-2 rounded-md text-lg font-bold px-3 mt-2 ${warnStandard ? 'border-[#D91212]' : 'border-[#A8A8A8]'}`}>
-                                <select className={`w-full py-2 focus:outline-none rounded-md text-[#909090] ${warnStandard ? 'text-red-600' : 'text-gray-500'} `}  value={standardSelect} onChange={handleSelectStandard}> 
-                                    <option value="none" selected disabled>Please Select Standard</option> 
-                                    <option value="free">0</option> 
-                                    <option value="starter">1 </option> 
-                                    <option value="professional">2</option> 
-                                    <option value="corporate">3</option> 
+                                <select className={`w-full py-2 focus:outline-none rounded-md text-[#909090] ${warnStandard ? 'text-red-600' : 'text-gray-500'} `}  defaultValue="none" onChange={handleSelectStandard}> 
+                                    <option value="none" disabled>Please Select Standard</option> 
+                                    {options}
                                 </select> 
                             </div>
                             <div className={`text-[#D91212] ${warnStandard ? 'flex' : 'hidden'}`}>

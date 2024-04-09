@@ -8,6 +8,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/api/easy-rice",require("./routes/riceRoutes"));
+app.use("/api/easy-rice",require("./routes/standardRoutes"));
 
 connectDb();
  
