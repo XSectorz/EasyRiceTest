@@ -23,6 +23,62 @@ const getDataByID = asyncHandler(async (req,res) => {
     }
 });
 
+const queryData = async (inspectionID, fromDate, toDate, pages) => {
+    let params = {};
+    let dataList;
+
+    if (inspectionID) {
+        params['inspectionID'] = inspectionID;
+    }
+
+    if (fromDate) {
+        params['createDate'] = { ...params['createDate'], $gte: fromDate };
+    }
+
+    if (toDate) {
+        params['createDate'] = { ...params['createDate'], $lte: toDate };
+    }
+    try {
+        const aggregatePipeline = [];
+
+        if (Object.keys(params).length > 0) {
+            aggregatePipeline.push({
+                $match: params
+            });
+        }
+
+        aggregatePipeline.push({
+            $facet: {
+                totalCount: [
+                    {
+                        $count: "total"
+                    }
+                ],
+                paginatedData: [
+                    { $skip: 10 * (pages - 1) },
+                    { $limit: 10 }
+                ]
+            }
+        });
+
+        const result = await riceData.aggregate(aggregatePipeline);
+
+        const totalCount = result[0].totalCount[0]?.total || 0;
+        const paginatedData = result[0].paginatedData;
+
+        //console.log(totalCount);
+        //console.log(paginatedData);
+
+        return {
+            totalCount,
+            paginatedData
+        };
+    } catch (error) {
+        console.error(error);
+        return []; 
+    }
+};
+
 const getDataByDateRange = asyncHandler(async (req,res) => {
     try {
 
@@ -40,83 +96,14 @@ const getDataByDateRange = asyncHandler(async (req,res) => {
             toDateObj = new Date(toDate).toISOString(); 
         }
         
-        if(toDate || fromDate || inspectionID) {
-           // console.log("This Case2");
+        dataList = await queryData(inspectionID,fromDate,toDate,pages);
 
-           /* if(inspectionID) {
-                console.log("inspectionID != null");
-            }
-            if(fromDate) {
-                console.log("fromDate != null");
-            }
-            if(toDate) {
-                console.log("toDate != null");
-            }*/
-
-            if(inspectionID && fromDate && toDate) {
-                dataList = await riceData.find({
-                    'inspectionID': inspectionID,
-                    'createDate': { $gte: fromDateObj, $lte: toDateObj}
-                });
-            } else if (!inspectionID && fromDate && toDate) {
-                dataList = await riceData.find({
-                    'createDate': { $gte: fromDateObj, $lte: toDateObj}
-                });
-            } else if (!inspectionID && !fromDate && toDate) {
-                dataList = await riceData.find({
-                    'createDate': { $lte: toDateObj}
-                });
-            } else if (!inspectionID && fromDate && !toDate) {
-                dataList = await riceData.find({
-                    'createDate': { $gte: fromDateObj}
-                });
-            } else if (inspectionID && !fromDate && !toDate) {
-                dataList = await riceData.find({
-                    'inspectionID': inspectionID
-                });
-            } else if (inspectionID && fromDate && !toDate) {
-                dataList = await riceData.find({
-                    'inspectionID': inspectionID,
-                    'createDate': { $gte: fromDateObj}
-                });
-            } else if (inspectionID && !fromDate && toDate) {
-                dataList = await riceData.find({
-                    'inspectionID': inspectionID,
-                    'createDate': { $lte: toDateObj}
-                });
-            }
-        } else {
-           // console.log("This Case");
-            dataList = await riceData.find();
-        }
-
-        const dataSize = dataList.length;
-        const startIndex = (pages-1)*10;
-        //console.log("DATA: ",dataList);
-        //console.log("START INDEX: ",startIndex);
-        //console.log("DATA SIZE: ",dataSize);
-        if(startIndex > dataSize) { //if first index more than datasize = out of range
-            return res.status(200).json({message: "Page Not Found!"});
-        } else {
-
-            if(startIndex+10 > dataSize) {
-                //console.log("COME");
-                return res.status(200).json({
-                    data: dataList.slice(startIndex, dataSize),
-                    startIndex: startIndex,
-                    endIndex:  dataSize,
-                    dataSize: dataSize
-                });
-            } else {
-                //console.log("HERE");
-                return res.status(200).json({
-                    data: dataList.slice(startIndex, startIndex + 10),
-                    startIndex: startIndex,
-                    endIndex:  startIndex + 10,
-                    dataSize: dataSize
-                });
-            }
-        }
+        return res.status(200).json({
+            data: dataList.paginatedData,
+            startIndex: 10*(pages-1),
+            endIndex:  10*(pages-1)+dataList.paginatedData.length,
+            dataSize: dataList.totalCount
+        });
 
     } catch(err) {
         console.log(err);

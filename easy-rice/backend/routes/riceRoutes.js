@@ -9,5 +9,4 @@ router.route('/history/:id').get(getDataByID);
 router.route('/history/:id').delete(deleteData);
 router.route('/history').get(getDataByDateRange);
 
-
 module.exports = router;

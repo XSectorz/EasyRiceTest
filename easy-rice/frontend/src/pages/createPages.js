@@ -6,12 +6,12 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { Box } from '@mui/system';
 import { IoCalendarClearOutline } from "react-icons/io5";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker"
-import { Link } from 'react-router-dom';
+import { Link , useNavigate  } from 'react-router-dom';
 import axios from "axios";
 import {v4 as uuidv4} from 'uuid';
 
 function CreatePage() {
-
+    const history = useNavigate();
     const Input = styled('input')({
         display:
          'none',
@@ -30,6 +30,7 @@ function CreatePage() {
 
             setStandardData(data);
             setOptions(options);
+
         } catch(err) {
             console.log(err)
         }
@@ -37,7 +38,7 @@ function CreatePage() {
 
     useEffect(() => {
         fetchStandardOption();
-      }, []);
+    }, []);
 
     const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -50,6 +51,7 @@ function CreatePage() {
 
     const [ warnName, setWarnName ] = useState(false);
     const [ warnStandard, setwarnStandard ] = useState(false);
+    const [ warnPrice, setwarnPrice ] = useState(false);
     const [ name , setName ] = useState("");
     const [ note , setNote ] = useState("");
     const [ price , setPrice ] = useState("");
@@ -73,14 +75,13 @@ function CreatePage() {
     };
 
     const handleSubmit = async () => {
-     //   console.log("Note: ",note);
-     //   console.log("Price: ",price);
 
+        let isError = false;
         if(name) {
             setWarnName(false);
-      //      console.log("Name: ",name);
         } else {
             setWarnName(true);
+            isError = true;
         }
 
         if (selectedFile) {
@@ -95,19 +96,22 @@ function CreatePage() {
         }
 
         const { front_end, back_end, other } = checkedItems;
-       // console.log("FrontEnd:", item1);
-       // console.log("BackEnd:", item2); 
-       // console.log("Other:", item3);
-       // console.log("Date:", samplingDate);
 
         if(standardSelect || selectedFile) {
             setwarnStandard(false);
-        //    console.log("Standard: ",standardSelect);
         } else {
             setwarnStandard(true);
+            isError = true;
         }
 
-        if(warnName || warnStandard) {
+        if(price) {
+            if(isNaN(price)) {
+                setwarnPrice(true);
+                isError = true;
+            }
+        }
+
+        if(isError) {
             return;
         }
 
@@ -134,6 +138,7 @@ function CreatePage() {
         //const dataJson = JSON.stringify(data);
 
         await axios.post('http://localhost:5000/api/easy-rice/create', data);
+        history("/");
         //console.log(dataJson);
     }
 
@@ -218,8 +223,11 @@ function CreatePage() {
                             <div className="flex text-lg font-bold">
                                 Price
                             </div>
-                            <div className="flex border-2 border-[#A8A8A8] rounded-md text-lg font-bold px-3 mt-2">
+                            <div className={`flex border-2 rounded-md text-lg font-bold px-3 mt-2 ${warnPrice ? 'border-[#D91212]' : 'border-[#A8A8A8]'}`}>
                                 <input className=" w-full py-2 focus:outline-none rounded-md text-[#909090]" id="price" type="text" placeholder="10,000" onChange={handleInputPrice}/>
+                            </div>
+                            <div className={`text-[#D91212] ${warnPrice ? 'flex' : 'hidden'}`}>
+                                only intergers can input!
                             </div>
                         </div>
                         <div className="flex flex-col mt-5">

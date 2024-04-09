@@ -7,7 +7,7 @@ import TableData from '../components/tableData';
 
 function MainPage() {
     
-    const [ searchID , setSearchID ] = useState("");
+    const [searchID , setSearchID] = useState("");
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [page, setPage] = useState(1);

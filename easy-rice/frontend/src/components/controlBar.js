@@ -44,7 +44,7 @@ function ControlBar({setSearchID , setSearchStartDate, setSearchEndDate, setPage
                     <div className='flex font-bold text-xl'>
                         ID
                     </div>
-                    <div className='flex border  border-opacity-50 rounded-md mt-3'>
+                    <div className='flex border border-opacity-50 rounded-md mt-3'>
                         <TextField id="outlined-basic" label="Search with ID" className='w-full' value={id} onChange={handleInputID}/>
                     </div>
                 </div>
