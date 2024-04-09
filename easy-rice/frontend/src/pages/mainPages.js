@@ -10,6 +10,7 @@ function MainPage() {
     const [ searchID , setSearchID ] = useState("");
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const [page, setPage] = useState(1);
 
     return (
         <div className=" bg-[#FAFAFA] h-screen">
@@ -23,11 +24,11 @@ function MainPage() {
                     </div>
                 </div>
                 <div className='flex flex-col mt-10 items-center justify-center mx-36'>
-                    <ControlBar setSearchID={setSearchID} setSearchStartDate={setStartDate} setSearchEndDate={setEndDate}/>
+                    <ControlBar setSearchID={setSearchID} setSearchStartDate={setStartDate} setSearchEndDate={setEndDate} setPage={setPage}/>
                 </div>
             </div>
             <div className='flex flex-col items-center justify-center mx-36 mt-10'>
-                <TableData searchID={searchID} startDate={startDate} endDate={endDate}/>
+                <TableData searchID={searchID} startDate={startDate} endDate={endDate} page={page} setPage={setPage}/>
             </div>
         </div>
     );

@@ -8,6 +8,7 @@ import { IoCalendarClearOutline } from "react-icons/io5";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker"
 import { Link } from 'react-router-dom';
 import axios from "axios";
+import {v4 as uuidv4} from 'uuid';
 
 function CreatePage() {
 
@@ -26,7 +27,9 @@ function CreatePage() {
                   {item.name}
                 </option>
               ));
-            setOptions(options)
+
+            setStandardData(data);
+            setOptions(options);
         } catch(err) {
             console.log(err)
         }
@@ -50,14 +53,15 @@ function CreatePage() {
     const [ name , setName ] = useState("");
     const [ note , setNote ] = useState("");
     const [ price , setPrice ] = useState("");
+    const [ standardData , setStandardData ] = useState(null);
     const [standardSelect , setStandardSelect ] = useState("");
     const [options , setOptions ] = useState(null);
     const [samplingDate, setSamplingDate] = useState(null);
 
     const [checkedItems, setCheckedItems] = useState({
-        item1: false,
-        item2: false,
-        item3: false,
+        front_end: false,
+        back_end: false,
+        other: false,
       });
     const [selectedFile, setSelectedFile] = useState(null);
     
@@ -68,37 +72,37 @@ function CreatePage() {
         });
     };
 
-    const handleSubmit = () => {
-        console.log("Note: ",note);
-        console.log("Price: ",price);
+    const handleSubmit = async () => {
+     //   console.log("Note: ",note);
+     //   console.log("Price: ",price);
 
         if(name) {
             setWarnName(false);
-            console.log("Name: ",name);
+      //      console.log("Name: ",name);
         } else {
             setWarnName(true);
         }
 
         if (selectedFile) {
             const reader = new FileReader();
-            reader.onload = (event) => {
+            /*reader.onload = (event) => {
                 const jsonData = event.target.result;
                 console.log("StandardSelectFile:", jsonData);
-            };
+            };*/
             reader.readAsText(selectedFile);
         } else {
-            console.log("StandardSelectFile: NOT SELECT");
+       //     console.log("StandardSelectFile: NOT SELECT");
         }
 
-        const { item1, item2, item3 } = checkedItems;
-        console.log("FrontEnd:", item1);
-        console.log("BackEnd:", item2); 
-        console.log("Other:", item3);
-        console.log("Date:", samplingDate);
+        const { front_end, back_end, other } = checkedItems;
+       // console.log("FrontEnd:", item1);
+       // console.log("BackEnd:", item2); 
+       // console.log("Other:", item3);
+       // console.log("Date:", samplingDate);
 
         if(standardSelect || selectedFile) {
             setwarnStandard(false);
-            console.log("Standard: ",standardSelect);
+        //    console.log("Standard: ",standardSelect);
         } else {
             setwarnStandard(true);
         }
@@ -106,6 +110,31 @@ function CreatePage() {
         if(warnName || warnStandard) {
             return;
         }
+
+        let dataSampling = [];
+
+        if(front_end) {
+            dataSampling.push("Front End");
+        }
+        if(back_end) {
+            dataSampling.push("Back End");
+        }
+        if(other) {
+            dataSampling.push("Other");
+        }
+        
+        let samplingTime = "";
+
+        if(samplingDate) {
+            samplingTime = samplingDate.toISOString()
+        }
+
+        const desiredStandard = standardData.find(standard => standard.id === standardSelect);
+        const data = {name: name,createDate: new Date().toISOString(), inspectionID: uuidv4(), standardID: desiredStandard.id, note: note, standardName: desiredStandard.name, samplingDate: samplingTime, samplingPoint: dataSampling, price: price, standardData: desiredStandard.standardData};
+        //const dataJson = JSON.stringify(data);
+
+        await axios.post('http://localhost:5000/api/easy-rice/create', data);
+        //console.log(dataJson);
     }
 
 
@@ -199,15 +228,15 @@ function CreatePage() {
                             </div>
                             <Box display="flex" flexDirection="row" justifyContent="space-between">
                                 <FormControlLabel
-                                    control={<Checkbox checked={checkedItems.item1} onChange={handleChange} name="item1" />}
+                                    control={<Checkbox checked={checkedItems.front_end} onChange={handleChange} name="front_end" />}
                                     label="Front End"
                                 />
                                 <FormControlLabel
-                                    control={<Checkbox checked={checkedItems.item2} onChange={handleChange} name="item2" />}
+                                    control={<Checkbox checked={checkedItems.back_end} onChange={handleChange} name="back_end" />}
                                     label="Back End"
                                 />
                                 <FormControlLabel
-                                    control={<Checkbox checked={checkedItems.item3} onChange={handleChange} name="item3" />}
+                                    control={<Checkbox checked={checkedItems.other} onChange={handleChange} name="other" />}
                                     label="Other"
                                 />
                             </Box>

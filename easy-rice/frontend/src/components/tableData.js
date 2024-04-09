@@ -4,12 +4,11 @@ import axios from 'axios';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { IoChevronBackSharp, IoChevronForwardSharp } from "react-icons/io5";
 
-function TableData({ searchID, startDate, endDate }) {
+function TableData({ searchID, startDate, endDate, page, setPage }) {
 
     const [dataSize, setDataSize] = useState(0);
     const [dataFilter, setDataFilter] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
-    const [page, setPage] = useState(1);
     const [startIndex,setStartIndex] = useState(0);
     const [endIndex,setEndIndex] = useState(0);
 
@@ -90,7 +89,7 @@ function TableData({ searchID, startDate, endDate }) {
 
            // console.log("URL: " + "http://localhost:5000/api/easy-rice/history/?fromDate=" + fromDateObj + "&toDate=" + toDateObj + "&inspectionID=" + searchID + "&pages=" + page);
             const response = await axios.get("http://localhost:5000/api/easy-rice/history/?fromDate=" + fromDateObj + "&toDate=" + toDateObj + "&inspectionID=" + searchID + "&pages=" + page);
-        
+            
             if (response.status === 404) {
                 setDataFilter("");
                 console.log("Not Found");
@@ -163,7 +162,7 @@ function TableData({ searchID, startDate, endDate }) {
                 </div>
             </div>
             {
-                dataFilter.map(item => (
+                dataFilter && dataFilter.map(item => (
                     <DataColumn key={item._id} createDate={item.createDate} inspectionID={item.inspectionID} name={item.name} standard={item.standardName} note={item.note} onCheckboxChange={(isChecked) => handleCheckBox(isChecked, item._id)} />
                 ))
             }

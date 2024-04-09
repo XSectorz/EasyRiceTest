@@ -4,7 +4,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker"
 import TextField from '@mui/material/TextField';
 
 
-function ControlBar({setSearchID , setSearchStartDate, setSearchEndDate}) {
+function ControlBar({setSearchID , setSearchStartDate, setSearchEndDate, setPage}) {
 
     const [ id , setID ] = useState("");
     const [startDate, setStartDate] = useState(null);
@@ -27,6 +27,7 @@ function ControlBar({setSearchID , setSearchStartDate, setSearchEndDate}) {
         } else {
             setSearchEndDate(endDate)
         }
+        setPage(1);
     }
 
     const handleClear = () => {
