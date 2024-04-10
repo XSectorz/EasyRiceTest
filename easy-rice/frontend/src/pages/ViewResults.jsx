@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import NavBar from "../components/navbar";
 import Composition from "../components/Composition";
+import DefectRice from "../components/DefectRice";
 import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 
@@ -12,6 +13,8 @@ function ViewResults() {
 
     const { inspectionID } = useParams();
     const navigate = useNavigate();
+
+    const defectRiceData = new Map();
 
     const fetchData = async () => {
          try {
@@ -44,6 +47,7 @@ function ViewResults() {
     let samplingStr;
     let samplingStrTH;
     let dataWeight;
+    let totalDefect = 0;
 
     const monthTH = ["ม.ค", "ก.พ", "มี.ค", "เม.ย", "พ.ค", "มิ.ย" , "ก.ค", "ส.ค" , "ก.ย", "ต.ค" , "พ.ย", "ธ.ค"];
 
@@ -69,7 +73,7 @@ function ViewResults() {
             let maxCondition;
         
             if(condtionMinLabel === "GT") {
-                minCondition = String(Number(minLength));
+                minCondition = String(Number(minLength)+0.01);
             } else if(condtionMinLabel === "GE") {
                 minCondition =  minLength;
             }
@@ -100,8 +104,15 @@ function ViewResults() {
             const grain = grainsData[0].grains[grainIndex];
             const length = Number(grain.length);
             const weight = Number(grain.weight);
+            const type = grain.type;
             maxWeight = maxWeight + weight;
            // console.log("Standard Length ",standardData.length);
+            
+            if(defectRiceData.has(type)) {
+                defectRiceData.set(type,Number(defectRiceData.get(type))+1);
+            } else {
+                defectRiceData.set(type,Number(1));
+            }
 
             for(let standardIndex in standardData) {
                 const standard = standardData[standardIndex];
@@ -110,6 +121,8 @@ function ViewResults() {
                 }
             }
         }
+
+        totalDefect = [...defectRiceData].reduce((total, [, value]) => total + value, 0);
 
        /* console.log("Data Weight 0:",(dataWeight[0]/maxWeight));
         console.log("Data Weight 1:",(dataWeight[1]/maxWeight));
@@ -243,6 +256,31 @@ function ViewResults() {
                                     {standardData.map((item, index) => (
                                         <Composition name={item.name} condition={item.conditionStr} actual={(dataWeight[index]/maxWeight)}/>
                                     ))}
+                                    </div>
+                                </div>
+                                <div className="flex bg-white rounded-md flex-col h-full w-full p-5 mt-5">
+                                    <div className="flex text-xl" style={{fontWeight: 500}}>
+                                        Defect Rice
+                                    </div>
+                                    <div className="flex flex-col w-full h-full bg-[#707070] bg-opacity-10 p-2 mt-2 justify-between">
+                                        <div className="flex w-full h-full">
+                                            <div className="flex w-5/6" style={{fontWeight: 500}}>
+                                                Name
+                                            </div>
+                                            <div className="flex w-1/6" style={{fontWeight: 500}}>
+                                                Actual
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col w-full h-full mt-2">
+                                        {
+                                            grainsData && [...defectRiceData].map(([key,value]) =>(
+                                                <DefectRice name={key} actual={value/grainsData[0].grains.length} isData={true}/>
+                                            ))
+                                        }
+                                    </div>
+                                    <div className="flex flex-col w-full h-full mt-2">
+                                        <DefectRice name="Total" actual={totalDefect/grainsData[0].grains.length} isData={false}/>
                                     </div>
                                 </div>
                             </div>

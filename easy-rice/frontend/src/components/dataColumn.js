@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 
 function DataColumn({ createDate, inspectionID, name, standard, note, onCheckboxChange }) {
@@ -20,22 +21,24 @@ function DataColumn({ createDate, inspectionID, name, standard, note, onCheckbox
                 <div className="flex">
                     <input className=" accent-[#1F7B44]" type="checkbox" id="dataCheckBox" name="dataCheckBox" checked={isClicked} onChange={handleCheckBox} />&nbsp;
                 </div>
-                <div className="flex">
+                <Link to={`/view/${inspectionID}`} className="flex">
                     {dateStr}
+                </Link>
+            </div>
+            <Link to={`/view/${inspectionID}`} className="flex flex-row w-[80%] h-full">
+                <div className='flex w-[25%]'>
+                    {inspectionID}
                 </div>
-            </div>
-            <div className='flex w-[20%]'>
-                {inspectionID}
-            </div>
-            <div className='flex w-[20%]'>
-                {name}
-            </div>
-            <div className='flex w-[20%]'>
-                {standard}
-            </div>
-            <div className='flex w-[20%]'>
-                {note}
-            </div>
+                <div className='flex w-[25%]'>
+                    {name}
+                </div>
+                <div className='flex w-[25%]'>
+                    {standard}
+                </div>
+                <div className='flex w-[25%]'>
+                    {note}
+                </div>
+            </Link>
         </div>
     )
 }
