@@ -17,6 +17,10 @@ const getDataByID = asyncHandler(async (req,res) => {
         
         //console.log("ID: " + inspectionID)
 
+        if(dataList.length == 0) {
+            return res.status(404).json(dataList);
+        }
+
         return res.status(200).json(dataList);
     } catch(err) {
         console.log(err)
@@ -25,7 +29,6 @@ const getDataByID = asyncHandler(async (req,res) => {
 
 const queryData = async (inspectionID, fromDate, toDate, pages) => {
     let params = {};
-    let dataList;
 
     if (inspectionID) {
         params['inspectionID'] = inspectionID;
@@ -85,16 +88,6 @@ const getDataByDateRange = asyncHandler(async (req,res) => {
         const { inspectionID, fromDate, toDate, pages} = req.query;
 
         let dataList;
-
-        let fromDateObj;
-        let toDateObj;
-
-        if(fromDate && fromDate !== "") {
-            fromDateObj = new Date(fromDate).toISOString()
-        }
-        if(toDate && toDate !== "") {
-            toDateObj = new Date(toDate).toISOString(); 
-        }
         
         dataList = await queryData(inspectionID,fromDate,toDate,pages);
 
