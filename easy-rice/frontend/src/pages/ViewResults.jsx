@@ -280,7 +280,9 @@ function ViewResults() {
                                         }
                                     </div>
                                     <div className="flex flex-col w-full h-full mt-2">
-                                        <DefectRice name="Total" actual={totalDefect/grainsData[0].grains.length} isData={false}/>
+                                        {
+                                            grainsData && <DefectRice name="Total" actual={totalDefect/grainsData[0].grains.length} isData={false}/>
+                                        }
                                     </div>
                                 </div>
                             </div>
