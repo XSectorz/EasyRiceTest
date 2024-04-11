@@ -136,7 +136,7 @@ const deleteData = asyncHandler(async (req,res) => {
         res.status(200).send({
             message: `Deleted ${dataID} from database`
         });
-        //test
+        //test v2
 
     } catch(err) {
         console.log(err);
