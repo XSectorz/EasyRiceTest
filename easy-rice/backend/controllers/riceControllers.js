@@ -103,11 +103,31 @@ const getDataByDateRange = asyncHandler(async (req,res) => {
     }
 });
 
+const updateData = asyncHandler(async (req,res) => {
+    try {
+        const dataID = req.params.id;
+
+        let targetData = await riceData.findById(dataID);
+
+        if(!targetData) {
+            return res.status(404).send("Target ID not found!");
+        }
+
+        targetData = await riceData.findByIdAndUpdate(req.params.id, req.body,{
+            new: true
+        })
+
+        res.status(200).json(targetData);
+    } catch(err) {
+        console.log(err);
+    }
+});
+
 const deleteData = asyncHandler(async (req,res) => {
     try {
 
         const dataID = req.params.id;
-        const deleteDataID = await riceData.findByIdAndDelete(dataID);
+        const deleteDataID = await riceData.findByIdAndDelete(dataID); //<----- Error here เนื่องจาก เช็คจาก id ของ ข้อมูลไม่ใช่ข้อมูลของ mongoDB
 
         if(!deleteDataID) {
             return res.status(404).send(`Data ID not found!`);
@@ -135,4 +155,4 @@ const createData = asyncHandler(async (req,res) => {
 });
 
 
-module.exports = { getAllData, createData, getDataByID, getDataByDateRange , deleteData}
+module.exports = { getAllData, createData, getDataByID, getDataByDateRange , deleteData, updateData}

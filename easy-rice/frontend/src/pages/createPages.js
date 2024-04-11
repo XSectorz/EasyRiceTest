@@ -20,7 +20,7 @@ function CreatePage() {
     const fetchStandardOption = async () => {
         try {
             const response = await axios.get('http://localhost:5000/api/easy-rice/standard');
-            const data = response.data;
+            const data = response.data.reverse();;
 
             const options = data.map(item => (
                 <option key={item.id} value={item.id}>
@@ -130,7 +130,7 @@ function CreatePage() {
         let samplingTime = "";
 
         if(samplingDate) {
-            samplingTime = samplingDate.toISOString()
+            samplingTime = samplingDate.toISOString();
         }
 
         const desiredStandard = standardData.find(standard => standard.id === standardSelect);

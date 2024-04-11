@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import NavBar from "../components/navbar";
 import Composition from "../components/Composition";
 import DefectRice from "../components/DefectRice";
-import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 
 function ViewResults() {
@@ -150,7 +150,7 @@ function ViewResults() {
                                 <Link to="/" className="flex mr-3 cursor-pointer rounded-md text-[#1F7B44] border-2 border-[#1F7B44] px-5 py-4 text-xl bg-white items-center justify-center">
                                     Back
                                 </Link>
-                                <Link to="/" className="flex cursor-pointer rounded-md text-white border-2 border-[#FAFAFA] px-6 py-4 text-xl bg-[#1F7B44] items-center justify-center">
+                                <Link to={`/edit/${inspectionID}`} className="flex cursor-pointer rounded-md text-white border-2 border-[#FAFAFA] px-6 py-4 text-xl bg-[#1F7B44] items-center justify-center">
                                     Edit
                                 </Link>
                             </div>
@@ -254,7 +254,7 @@ function ViewResults() {
                                     </div>
                                     <div className="flex flex-col w-full h-full mt-2">
                                     {standardData.map((item, index) => (
-                                        <Composition name={item.name} condition={item.conditionStr} actual={(dataWeight[index]/maxWeight)}/>
+                                        <Composition key={index} name={item.name} condition={item.conditionStr} actual={(dataWeight[index]/maxWeight)}/>
                                     ))}
                                     </div>
                                 </div>
@@ -275,7 +275,7 @@ function ViewResults() {
                                     <div className="flex flex-col w-full h-full mt-2">
                                         {
                                             grainsData && [...defectRiceData].map(([key,value]) =>(
-                                                <DefectRice name={key} actual={value/grainsData[0].grains.length} isData={true}/>
+                                                <DefectRice key={key} name={key} actual={value/grainsData[0].grains.length} isData={true}/>
                                             ))
                                         }
                                     </div>
